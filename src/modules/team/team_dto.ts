@@ -3,26 +3,26 @@ import { ID, ObjectType, Field, InputType } from "type-graphql"
 @ObjectType()
 export class Team {
   @Field(() => ID, { nullable: false })
-  id: number
+  id!: number
 
   @Field(() => String, { nullable: false })
-  name: string
+  name!: string
 
   @Field(() => String, { nullable: false })
-  tla: string
+  tla!: string
 
   @Field(() => String, { nullable: false })
-  shortName: string
+  shortName!: string
 
   @Field(() => String, { nullable: false })
-  areaName: string
+  areaName!: string
 
   @Field(() => String, { nullable: false })
-  address: string
+  address!: string
 }
 
 @InputType()
 export class TeamArgs {
   @Field(() => String, { nullable: false })
-  name: string
+  name!: string
 }

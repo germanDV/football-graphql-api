@@ -66,14 +66,11 @@ export async function findPlayersByCompetition(input: PlayerArgs) {
     )
   }
 
-  console.log({ teams })
-
   const playerIds: number[] = []
   teams.forEach((t) => {
     const mappings = MAPPING.filter((i) => i.teamId === t.id)
     mappings.forEach((i) => playerIds.push(i.playerId))
   })
-  console.log({ playerIds })
 
   const players: Player[] = []
   playerIds.forEach((id) => {
@@ -81,6 +78,5 @@ export async function findPlayersByCompetition(input: PlayerArgs) {
     if (player) players.push(player)
   })
 
-  console.log({ players })
   return players
 }
