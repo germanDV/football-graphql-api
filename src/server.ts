@@ -1,7 +1,7 @@
 import { ApolloServer } from "apollo-server-fastify"
 import { ApolloServerPlugin } from "apollo-server-plugin-base"
 import { ApolloServerPluginDrainHttpServer } from "apollo-server-core"
-import fastify, { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
+import fastify, { FastifyInstance } from "fastify"
 import { buildSchema } from "type-graphql"
 import CompetitionResolver from "./modules/competition/competition_resolver"
 import TeamResolver from "./modules/team/team_resolver"
@@ -54,10 +54,6 @@ const setHttpErrorCodes: ApolloServerPlugin = {
   },
 }
 
-async function buildContext({ request, reply }: { request: FastifyRequest; reply: FastifyReply }) {
-  return { request, reply }
-}
-
 export async function createServer() {
   const schema = await buildSchema({
     validate: { forbidUnknownValues: false },
@@ -71,7 +67,6 @@ export async function createServer() {
       setHttpErrorCodes,
       ApolloServerPluginDrainHttpServer({ httpServer: app.server }),
     ],
-    context: buildContext,
   })
 
   return { app, server }
