@@ -1,4 +1,5 @@
 import { Competition, ImportCompetitionInput } from "./competition_dto"
+import { fetchCompetition } from "../../utils/football_api"
 
 const MOCKS: Partial<Competition>[] = [
   {
@@ -16,6 +17,9 @@ const MOCKS: Partial<Competition>[] = [
 ]
 
 export async function importCompetition(input: ImportCompetitionInput) {
+  const { data } = await fetchCompetition(input.leagueCode)
+  console.log(data)
+
   const comp = MOCKS.find((i) => i.code === input.leagueCode.toUpperCase())
   if (!comp) throw new Error("competition not found")
   return comp

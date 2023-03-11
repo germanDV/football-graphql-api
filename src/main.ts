@@ -1,8 +1,10 @@
 import "reflect-metadata"
+import * as dotenv from "dotenv"
 import { createServer } from "./server"
 
-// Move to config and get from .env
-const PORT = 4040
+dotenv.config()
+
+const PORT = Number(process.env.PORT) || 4040
 
 async function main() {
   const { app, server } = await createServer()
