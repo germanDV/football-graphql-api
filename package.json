@@ -1,15 +1,20 @@
 {
   "name": "santex_german",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "./dist/main.js",
   "author": "German Viescas",
   "private": true,
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --exit-child  --transpile-only ./src/main.ts",
-    "start": "ts-node ./src/main.ts",
+    "build": "tsc",
+    "start": "node ./dist/main.js",
     "fmt": "echo \"TODO: install and configure prettier\"",
     "lint": "echo \"TODO: install and configure eslint\""
+  },
+  "engines": {
+    "node": ">= 18.15.0",
+    "npm": ">= 9.5.0"
   },
   "dependencies": {
     "apollo-server-core": "^3.0.0",
@@ -20,7 +25,6 @@
     "graphql": "^15.0.0",
     "prisma": "^4.11.0",
     "reflect-metadata": "^0.1.13",
-    "ts-node": "^10.9.1",
     "type-graphql": "^1.1.1"
   },
   "devDependencies": {
