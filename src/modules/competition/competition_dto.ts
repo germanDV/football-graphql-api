@@ -13,7 +13,7 @@ export class Competition {
   @Field(() => String, { nullable: false })
   code!: string
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   areaName!: string
 
   @Field(() => [Team])

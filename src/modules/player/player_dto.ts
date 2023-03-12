@@ -6,16 +6,16 @@ export class Player {
   @Field(() => ID, { nullable: false })
   id!: number
 
-  @Field(() => String, { nullable: false })
+  @Field(() => String, { nullable: true })
   name!: string
 
-  @Field(() => String, { nullable: false })
+  @Field(() => String, { nullable: true })
   position!: string
 
-  @Field(() => String, { nullable: false })
+  @Field(() => String, { nullable: true })
   dateOfBirth!: string
 
-  @Field(() => String, { nullable: false })
+  @Field(() => String, { nullable: true })
   nationality!: string
 }
 

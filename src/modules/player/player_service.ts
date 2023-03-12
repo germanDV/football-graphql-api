@@ -1,86 +1,55 @@
 import { PoolClient } from "pg"
+import { query } from "../../database/db_client"
 import { ApiCompetition } from "../../utils/football_api"
-import { findTeamsByCompetition } from "../team/team_service"
-import { Player, PlayerArgs } from "./player_dto"
+import { PlayerArgs } from "./player_dto"
 
-const MOCKS: Player[] = [
-  {
-    id: 3141,
-    name: "Emiliano Martínez",
-    position: "Goalkeeper",
-    dateOfBirth: "1992-09-02",
-    nationality: "Argentina",
-  },
-  {
-    id: 3883,
-    name: "Jed Steer",
-    position: "Goalkeeper",
-    dateOfBirth: "1992-09-23",
-    nationality: "England",
-  },
-  {
-    id: 15512,
-    name: "Robin Olsen",
-    position: "Goalkeeper",
-    dateOfBirth: "1990-01-08",
-    nationality: "Sweden",
-  },
-  {
-    id: 3317,
-    name: "Ashley Young",
-    position: "Defence",
-    dateOfBirth: "1985-07-09",
-    nationality: "England",
-  },
-  {
-    id: 10,
-    name: "Bochini",
-    position: "Diez",
-    dateOfBirth: "1955-07-09",
-    nationality: "Argentina",
-  },
-  {
-    id: 6,
-    name: "Gabriel Milito",
-    position: "Defence",
-    dateOfBirth: "1985-07-09",
-    nationality: "Argentina",
-  },
-]
+export async function findPlayersByTeam(teamId: number) {
+  let result = await query("select distinct(player_id) from team_players where team_id = $1", [
+    teamId,
+  ])
 
-const MAPPING = [
-  { playerId: 3141, teamId: 58 },
-  { playerId: 3883, teamId: 58 },
-  { playerId: 15512, teamId: 58 },
-  { playerId: 3317, teamId: 57 },
-  { playerId: 10, teamId: 1 },
-  { playerId: 6, teamId: 1 },
-]
+  const playerIds = result.rows.map((i) => i.player_id).join(",")
+  result = await query(
+    `select id, name, position, dob as "dateOfBirth", nationality from players where id in (${playerIds})`
+  )
+
+  return result.rows
+}
 
 export async function findPlayersByCompetition(input: PlayerArgs) {
-  let teams = await findTeamsByCompetition(input.leagueCode)
-
+  let text = ""
+  let args: string[] = []
   if (input.teamName) {
-    teams = teams.filter(
-      (i) =>
-        i.name.toLowerCase() === input.teamName.toLowerCase() ||
-        i.shortName.toLowerCase() === input.teamName.toLowerCase()
-    )
+    text = `select team_id from competition_teams
+      where competition_id = (select id from competitions where code = $1)
+      and team_id = (select id from teams where lower(name) = $2 or lower(short_name) = $2)`
+    args = [input.leagueCode, input.teamName.toLowerCase()]
+  } else {
+    text =
+      "select team_id from competition_teams where competition_id = (select id from competitions where code = $1)"
+    args = [input.leagueCode]
   }
 
-  const playerIds: number[] = []
-  teams.forEach((t) => {
-    const mappings = MAPPING.filter((i) => i.teamId === t.id)
-    mappings.forEach((i) => playerIds.push(i.playerId))
-  })
+  let result = await query(text, args)
+  if (result.rows.length === 0) {
+    if (!input.teamName) {
+      throw new Error(`League "${input.leagueCode}" not found in database`)
+    } else {
+      throw new Error(
+        `League "${input.leagueCode}" not found in database or team "${input.teamName}" does not belong to said league.`
+      )
+    }
+  }
 
-  const players: Player[] = []
-  playerIds.forEach((id) => {
-    const player = MOCKS.find((i) => i.id === id)
-    if (player) players.push(player)
-  })
+  const teamIds = result.rows.map((i) => i.team_id).join(",")
+  result = await query(`select distinct(player_id) from team_players where team_id in (${teamIds})`)
 
-  return players
+  const playerIds = result.rows.map((i) => i.player_id).join(",")
+  result = await query(
+    `select id, name, position, dob as "dateOfBirth", nationality from players where id in (${playerIds})`
+  )
+
+  return result.rows
 }
 
 // TODO: insert all players in a single query.

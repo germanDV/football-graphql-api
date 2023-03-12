@@ -1,24 +1,9 @@
 import { PoolClient } from "pg"
-import { Competition, ImportCompetitionInput } from "./competition_dto"
+import { ImportCompetitionInput } from "./competition_dto"
 import { insertTeams } from "../team/team_service"
 import { fetchCompetition, ApiCompetition } from "../../utils/football_api"
 import { getClient, query } from "../../database/db_client"
 import { insertTeamsPlayers } from "../player/player_service"
-
-const MOCKS: Partial<Competition>[] = [
-  {
-    id: 331,
-    name: "Premier League",
-    code: "PL",
-    areaName: "England",
-  },
-  {
-    id: 154,
-    name: "Torne Fútbol Argentino",
-    code: "ASL",
-    areaName: "Argentina",
-  },
-]
 
 async function insertCompetition(dbClient: PoolClient, competition: ApiCompetition["competition"]) {
   return dbClient.query("insert into competitions(id, name, code) values($1, $2, $3)", [
@@ -65,5 +50,8 @@ export async function importCompetition(input: ImportCompetitionInput) {
 }
 
 export async function findCompetitions() {
-  return MOCKS
+  const { rows } = await query(
+    `select id, name, code, coalesce(area_name, '') "areaName" from competitions`
+  )
+  return rows
 }
