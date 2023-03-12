@@ -1,3 +1,5 @@
+import { PoolClient } from "pg"
+import { ApiCompetition } from "../../utils/football_api"
 import { findTeamsByCompetition } from "../team/team_service"
 import { Player, PlayerArgs } from "./player_dto"
 
@@ -79,4 +81,22 @@ export async function findPlayersByCompetition(input: PlayerArgs) {
   })
 
   return players
+}
+
+// TODO: insert all players in a single query.
+export async function insertTeamsPlayers(dbClient: PoolClient, teams: ApiCompetition["teams"]) {
+  for (const team of teams) {
+    for (const player of team.squad) {
+      await dbClient.query(
+        // Conflict may arise from the fact that one player could play for multiple teams in the span of a season.
+        "insert into players(id, name, position, dob, nationality) values($1, $2, $3, $4, $5) on conflict do nothing",
+        [player.id, player.name, player.position, player.dateOfBirth, player.nationality]
+      )
+
+      await dbClient.query(
+        "insert into team_players(player_id, team_id) values($1, $2) on conflict do nothing",
+        [player.id, team.id]
+      )
+    }
+  }
 }

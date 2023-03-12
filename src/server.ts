@@ -29,11 +29,6 @@ const setHttpErrorCodes: ApolloServerPlugin = {
     return {
       async willSendResponse({ response }) {
         if (response && response.http && response.errors && response.errors.length > 0) {
-          if (response.errors[0].message.startsWith("Access denied")) {
-            response.http.status = 403
-            return
-          }
-
           switch (response.errors[0].extensions?.code) {
             case "BAD_USER_INPUT":
             case "GRAPHQL_VALIDATION_FAILED":

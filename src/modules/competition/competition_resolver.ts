@@ -6,13 +6,14 @@ import { findTeamsByCompetition } from "../team/team_service"
 
 @Resolver(() => Competition)
 class CompetitionResolver {
+  // TODO: rate limit these requests to 10 per minute max.
   @Mutation(() => Competition)
   async importLeague(@Arg("input") input: ImportCompetitionInput) {
     try {
       const competition = await importCompetition(input)
       return competition
     } catch (err: any) {
-      if (err?.code === "P2002") {
+      if (err?.message === "AlreadyImported") {
         throw new UserInputError(`League ${input.leagueCode} has already been imported`)
       }
       throw new ApolloError(err?.message || `Error importing league ${input.leagueCode}`)

@@ -1,29 +1,31 @@
+import fs from "node:fs/promises"
+import path from "node:path"
 import axios from "axios"
 
-type ApiCompetition = {
+export type ApiCompetition = {
   count: number
   competition: {
     id: number
     name: string
     code: string
-    teams: Array<{
-      area: {
-        name: string
-      }
+  }
+  teams: Array<{
+    area: {
+      name: string
+    }
+    id: number
+    name: string
+    shortName: string
+    tla: string
+    address: string
+    squad: Array<{
       id: number
       name: string
-      shortName: string
-      tla: string
-      address: string
-      squad: Array<{
-        id: number
-        name: string
-        position: string
-        dateOfBirth: string
-        nationality: string
-      }>
+      position: string
+      dateOfBirth: string
+      nationality: string
     }>
-  }
+  }>
 }
 
 export async function fetchCompetition(leagueCode: string) {
@@ -35,3 +37,8 @@ export async function fetchCompetition(leagueCode: string) {
     },
   })
 }
+// export async function fetchCompetition(leagueCode: string): Promise<{ data: ApiCompetition }> {
+//   const mockRespFile = path.resolve(__dirname, "..", "database", "resp.json")
+//   const mockData = await fs.readFile(mockRespFile, { encoding: "utf-8" })
+//   return { data: JSON.parse(mockData) }
+// }

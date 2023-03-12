@@ -1,3 +1,5 @@
+import { PoolClient } from "pg"
+import { ApiCompetition } from "../../utils/football_api"
 import { Competition } from "../competition/competition_dto"
 import { Team, TeamArgs } from "./team_dto"
 
@@ -53,4 +55,23 @@ export async function findTeamsByCompetition(competitionCode: Competition["code"
   })
 
   return teams
+}
+
+export async function insertTeams(
+  dbClient: PoolClient,
+  teams: ApiCompetition["teams"],
+  competitionId: number
+) {
+  for (const team of teams) {
+    await dbClient.query(
+      // Conflict may arise from the fact that one team may compete in multiple competitions. In such case, just ignore it.
+      "insert into teams(id, name, tla, short_name, area_name, address) values($1, $2, $3, $4, $5, $6) on conflict do nothing",
+      [team.id, team.name, team.tla, team.shortName, team.area.name, team.address]
+    )
+
+    await dbClient.query("insert into competition_teams(team_id, competition_id) values($1, $2)", [
+      team.id,
+      competitionId,
+    ])
+  }
 }

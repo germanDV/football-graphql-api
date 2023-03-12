@@ -1,12 +1,14 @@
 import "reflect-metadata"
 import * as dotenv from "dotenv"
 import { createServer } from "./server"
+import { init } from "./database/db_client"
 
 dotenv.config()
 
 const PORT = Number(process.env.PORT) || 4040
 
 async function main() {
+  init()
   const { app, server } = await createServer()
 
   app.get("/healthcheck", async () => "OK")
