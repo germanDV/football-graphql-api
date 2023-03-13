@@ -9,8 +9,8 @@
     "dev": "ts-node-dev --exit-child  --transpile-only ./src/main.ts",
     "build": "tsc",
     "start": "node ./dist/main.js",
-    "db:start": "docker compose up",
-    "db:purge": "docker container rm football_db",
+    "docker:start": "docker compose up",
+    "docker:purge": "docker container rm football_db && docker container rm football_redis",
     "fmt": "echo \"TODO: install and configure prettier\"",
     "lint": "echo \"TODO: install and configure eslint\""
   },
@@ -26,6 +26,7 @@
     "dotenv": "^16.0.3",
     "fastify": "^3.0.0",
     "graphql": "^15.0.0",
+    "ioredis": "^5.3.1",
     "pg": "^8.10.0",
     "prisma": "^4.11.0",
     "reflect-metadata": "^0.1.13",

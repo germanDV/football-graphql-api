@@ -1,13 +1,17 @@
-import { Query, Mutation, Resolver, Arg, FieldResolver, Root } from "type-graphql"
+import { Query, Mutation, Resolver, Arg, FieldResolver, Root, UseMiddleware } from "type-graphql"
 import { ApolloError, UserInputError } from "apollo-server-core"
 import { Competition, ImportCompetitionInput } from "./competition_dto"
 import { importCompetition, findCompetitions } from "./competition_service"
 import { findTeamsByCompetition } from "../team/team_service"
+import { rateLimiter } from "../../utils/rate_limiter"
+
+const IMPORT_LEAGUE_KEY = "import_league_mutation"
+const REQS_PER_MINUTE = 2
 
 @Resolver(() => Competition)
 class CompetitionResolver {
-  // TODO: rate limit these requests to 10 per minute max.
   @Mutation(() => Competition)
+  @UseMiddleware(rateLimiter(IMPORT_LEAGUE_KEY, REQS_PER_MINUTE))
   async importLeague(@Arg("input") input: ImportCompetitionInput) {
     try {
       const competition = await importCompetition(input)
