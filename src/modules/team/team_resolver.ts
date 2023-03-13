@@ -10,6 +10,7 @@ class TeamResolver {
   async team(@Arg("input") input: TeamArgs) {
     try {
       return findTeam(input)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       if (err?.message === "team not found") {
         throw new UserInputError(`Team ${input.name} has not been found`)

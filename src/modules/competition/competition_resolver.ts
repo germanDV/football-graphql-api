@@ -16,6 +16,7 @@ class CompetitionResolver {
     try {
       const competition = await importCompetition(input)
       return competition
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       if (err?.message === "AlreadyImported") {
         throw new UserInputError(`League ${input.leagueCode} has already been imported`)

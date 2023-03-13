@@ -9,6 +9,7 @@ class PlayerResolver {
   async players(@Arg("input") input: PlayerArgs) {
     try {
       return findPlayersByCompetition(input)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       throw new ApolloError(
         err?.message || `Error finding players for competition ${input.leagueCode}`

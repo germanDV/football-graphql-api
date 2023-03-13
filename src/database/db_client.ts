@@ -17,6 +17,7 @@ export function init() {
   pool.on("error", (err) => console.log("Database Error!", err))
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function query(text: string, params?: any) {
   return pool.query(text, params)
 }

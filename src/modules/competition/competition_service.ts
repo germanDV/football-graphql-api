@@ -21,7 +21,7 @@ async function insertCompetition(dbClient: PoolClient, competition: ApiCompetiti
  */
 export async function importCompetition(input: ImportCompetitionInput) {
   // Check if competition has already been imported; if so, throw an error.
-  let resp = await query("select count(*) from competitions where code = $1", [
+  const resp = await query("select count(*) from competitions where code = $1", [
     input.leagueCode.toUpperCase(),
   ])
   if (resp.rows[0].count > 0) {
