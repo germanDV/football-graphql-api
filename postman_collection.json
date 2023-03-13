@@ -1,0 +1,192 @@
+{
+	"info": {
+		"_postman_id": "bb3f7248-dc2c-42e7-ab82-d5edf7a1de3d",
+		"name": "Football",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1656252"
+	},
+	"item": [
+		{
+			"name": "Import Competition",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "mutation ImportCompetition($input: ImportCompetitionInput!) {\n  importLeague(input: $input) {\n    id\n    name\n    code\n  }\n}",
+						"variables": "{\n  \"input\": {\n    \"leagueCode\": \"PL\"\n  }\n}"
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/graphql",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Competitions",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query GetCompetitions {\n    competitions {\n        id\n        name\n        code\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/graphql",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Competitions Incl. Teams",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query GetCompetitions {\n    competitions {\n        id\n        name\n        code\n        teams {\n            tla\n            shortName\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/graphql",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Players By Competition",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query ExampleQuery($input: PlayerArgs!) {\n  players(input: $input) {\n    dateOfBirth\n    id\n    name\n    nationality\n    position\n  }\n}",
+						"variables": "{\n  \"input\": {\n    \"leagueCode\": \"PL\"\n  }\n}"
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/graphql",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Players By Competition And Team",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query ExampleQuery($input: PlayerArgs!) {\n  players(input: $input) {\n    dateOfBirth\n    id\n    name\n    nationality\n    position\n  }\n}",
+						"variables": "{\n  \"input\": {\n    \"leagueCode\": \"PL\",\n    \"teamName\": \"Aston Villa\"\n  }\n}"
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/graphql",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Team",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query GetTeam($input: TeamArgs!) {\n  team(input: $input) {\n    id\n    name\n    tla\n    shortName\n    areaName\n    address\n  }\n}",
+						"variables": "{\n  \"input\": {\n    \"name\": \"Man United\"\n  }\n}"
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/graphql",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Team Incl. Players",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query GetTeam($input: TeamArgs!) {\n  team(input: $input) {\n    id\n    name\n    tla\n    shortName\n    areaName\n    address\n    players {\n        name\n        position\n    }\n  }\n}",
+						"variables": "{\n  \"input\": {\n    \"name\": \"Man United\"\n  }\n}"
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/graphql",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

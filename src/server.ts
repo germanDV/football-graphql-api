@@ -7,8 +7,7 @@ import CompetitionResolver from "./modules/competition/competition_resolver"
 import TeamResolver from "./modules/team/team_resolver"
 import PlayerResolver from "./modules/player/player_resolver"
 
-// TODO: enable logger
-const app = fastify({ logger: false })
+const app = fastify({ logger: true })
 
 /** Stop Fastify app when Apollo server is stopped. */
 function fastifyAppClosePlugin(app: FastifyInstance): ApolloServerPlugin {
@@ -43,9 +42,6 @@ const setHttpErrorCodes: ApolloServerPlugin = {
             default:
               if (response.errors[0].extensions?.exception?.kind) {
                 switch (response.errors[0].extensions?.exception?.kind) {
-                  case "TooManyRequestsError":
-                    response.http.status = 429
-                    break
                   case "TooManyRequestsError":
                     response.http.status = 429
                     break
