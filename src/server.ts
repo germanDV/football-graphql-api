@@ -41,7 +41,24 @@ const setHttpErrorCodes: ApolloServerPlugin = {
               response.http.status = 403
               break
             default:
-              response.http.status = 500
+              if (response.errors[0].extensions?.exception?.kind) {
+                switch (response.errors[0].extensions?.exception?.kind) {
+                  case "TooManyRequestsError":
+                    response.http.status = 429
+                    break
+                  case "TooManyRequestsError":
+                    response.http.status = 429
+                    break
+                  case "CompetitionNotFound":
+                  case "CompetitionOrTeamNotFound":
+                    response.http.status = 404
+                    break
+                  default:
+                    response.http.status = 500
+                }
+              } else {
+                response.http.status = 500
+              }
           }
         }
       },

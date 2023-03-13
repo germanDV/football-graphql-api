@@ -3,6 +3,7 @@ import { query } from "../../database/db_client"
 import { PlayerArgs } from "./player_dto"
 import { ApiCompetition } from "../../utils/football_api"
 import { escapeSingleQuote } from "../../utils/escape"
+import { CompetitionNotFound, CompetitionOrTeamNotFound } from "../../utils/errors"
 
 export async function findPlayersByTeam(teamId: number) {
   let result = await query("select distinct(player_id) from team_players where team_id = $1", [
@@ -33,13 +34,9 @@ export async function findPlayersByCompetition(input: PlayerArgs) {
 
   let result = await query(text, args)
   if (result.rows.length === 0) {
-    if (!input.teamName) {
-      throw new Error(`League "${input.leagueCode}" not found in database`)
-    } else {
-      throw new Error(
-        `League "${input.leagueCode}" not found in database or team "${input.teamName}" does not belong to said league.`
-      )
-    }
+    throw !input.teamName
+      ? new CompetitionNotFound(input.leagueCode)
+      : new CompetitionOrTeamNotFound(input.leagueCode, input.teamName)
   }
 
   const teamIds = result.rows.map((i) => i.team_id).join(",")
