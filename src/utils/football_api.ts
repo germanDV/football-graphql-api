@@ -28,17 +28,17 @@ export type ApiCompetition = {
   }>
 }
 
-export async function fetchCompetition(leagueCode: string) {
-  return axios<ApiCompetition>({
-    method: "GET",
-    url: `http://api.football-data.org/v4/competitions/${leagueCode.toUpperCase()}/teams`,
-    headers: {
-      "X-Auth-Token": process.env.API_TOKEN,
-    },
-  })
-}
-// export async function fetchCompetition(leagueCode: string): Promise<{ data: ApiCompetition }> {
-//   const mockRespFile = path.resolve(__dirname, "..", "database", "resp.json")
-//   const mockData = await fs.readFile(mockRespFile, { encoding: "utf-8" })
-//   return { data: JSON.parse(mockData) }
+// export async function fetchCompetition(leagueCode: string) {
+//   return axios<ApiCompetition>({
+//     method: "GET",
+//     url: `http://api.football-data.org/v4/competitions/${leagueCode.toUpperCase()}/teams`,
+//     headers: {
+//       "X-Auth-Token": process.env.API_TOKEN,
+//     },
+//   })
 // }
+export async function fetchCompetition(leagueCode: string): Promise<{ data: ApiCompetition }> {
+  const mockRespFile = path.resolve(__dirname, "..", "database", "resp.json")
+  const mockData = await fs.readFile(mockRespFile, { encoding: "utf-8" })
+  return { data: JSON.parse(mockData) }
+}

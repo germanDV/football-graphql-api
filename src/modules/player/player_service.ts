@@ -1,7 +1,8 @@
 import { PoolClient } from "pg"
 import { query } from "../../database/db_client"
-import { ApiCompetition } from "../../utils/football_api"
 import { PlayerArgs } from "./player_dto"
+import { ApiCompetition } from "../../utils/football_api"
+import { escapeSingleQuote } from "../../utils/escape"
 
 export async function findPlayersByTeam(teamId: number) {
   let result = await query("select distinct(player_id) from team_players where team_id = $1", [
@@ -52,20 +53,26 @@ export async function findPlayersByCompetition(input: PlayerArgs) {
   return result.rows
 }
 
-// TODO: insert all players in a single query.
 export async function insertTeamsPlayers(dbClient: PoolClient, teams: ApiCompetition["teams"]) {
-  for (const team of teams) {
-    for (const player of team.squad) {
-      await dbClient.query(
-        // Conflict may arise from the fact that one player could play for multiple teams in the span of a season.
-        "insert into players(id, name, position, dob, nationality) values($1, $2, $3, $4, $5) on conflict do nothing",
-        [player.id, player.name, player.position, player.dateOfBirth, player.nationality]
-      )
+  const playerValues: string[] = []
+  const mappingValues: string[] = []
 
-      await dbClient.query(
-        "insert into team_players(player_id, team_id) values($1, $2) on conflict do nothing",
-        [player.id, team.id]
-      )
+  for (const t of teams) {
+    for (const p of t.squad) {
+      const name = escapeSingleQuote(p.name)
+      const nation = escapeSingleQuote(p.nationality)
+      playerValues.push(`(${p.id}, '${name}', '${p.position}', '${p.dateOfBirth}', '${nation}')`)
+      mappingValues.push(`(${p.id}, ${t.id})`)
     }
   }
+
+  const players = playerValues.join(", ")
+  const mappings = mappingValues.join(", ")
+
+  // Conflict may arise from the fact that one player could play for multiple teams in the span of a season.
+  const insertPlayersQuery = `insert into players(id, name, position, dob, nationality) values${players} on conflict do nothing`
+  const insertMappingsQuery = `insert into team_players(player_id, team_id) values${mappings} on conflict do nothing`
+
+  await dbClient.query(insertPlayersQuery)
+  await dbClient.query(insertMappingsQuery)
 }
