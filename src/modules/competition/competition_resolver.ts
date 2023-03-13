@@ -6,7 +6,7 @@ import { findTeamsByCompetition } from "../team/team_service"
 import { rateLimiter } from "../../utils/rate_limiter"
 
 const IMPORT_LEAGUE_KEY = "import_league_mutation"
-const REQS_PER_MINUTE = 2
+const REQS_PER_MINUTE = 8
 
 @Resolver(() => Competition)
 class CompetitionResolver {
